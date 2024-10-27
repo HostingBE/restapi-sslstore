@@ -13,8 +13,8 @@ First of all, requesting different data via REST API with the answer in JSON for
 **Howto start with this API**
 
 ```
-use HostingBE\App\SSLstore;
-use HostingBE\App\Logger\APILogger;
+use HostingBE\Api\SSLstore;
+use HostingBE\Api\Logger\APILogger;
 
 $partnercode = "[your partnercode]";
 $authtoken = "[your token]";
