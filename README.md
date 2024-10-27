@@ -12,7 +12,7 @@ First of all, requesting different data via REST API with the answer in JSON for
 
 **Howto start with this API**
 
-`
+```
 use HostingBE\App\SSLstore;
 use HostingBE\App\Logger\APILogger;
 
@@ -21,14 +21,20 @@ $authtoken = "[your token]";
 $replaytoken = "[your replay token]";
 
 $logger = (new APILogger)->create('my-api-sslstore');
-$api = new SSLstore($logger, $partnercode, $authtoken, $replaytoken);`
+$api = new SSLstore($logger, $partnercode, $authtoken, $replaytoken);
+```
 
 Check the status of the API of SSLstore
 
-`$api->getServiceStatus();`
+````
+$response = $api->getServiceStatus();
+```
 
 Get the details of product code rapidssl
-`$api->getProducts('rapidssl');`
+
+```
+$response = $api->getProducts('rapidssl');
+```
 
 
 
