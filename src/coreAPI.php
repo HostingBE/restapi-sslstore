@@ -6,7 +6,7 @@
 *
 */
 
-namespace App;
+namespace HostingBE\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;

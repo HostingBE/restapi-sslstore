@@ -6,7 +6,7 @@
 *
 */
 
-namespace App\Logger;
+namespace HostingBE\Api\Logger;
 
 use DateTime;
 use DateTimeZone;

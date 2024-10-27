@@ -5,10 +5,10 @@
 * @copyright 2024 HostingBE
 *
 */
-namespace App;
+namespace HostingBE\Api;
 
-use App\Logger\Logger;
-use App\baseAPI;
+use HostingBE\Api\Logger\Logger;
+use HostingBE\Api\baseAPI;
 use GuzzleHttp\Exception\RequestException;
 
 class SSLStore {

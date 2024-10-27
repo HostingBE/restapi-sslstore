@@ -7,7 +7,7 @@
 *
 */
 
-namespace App;
+namespace HostingBE\Api;
 
 use Psr\Log\LoggerInterface;
 

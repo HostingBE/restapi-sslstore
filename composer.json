@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "HostingBE\\Api\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "HostingBE\\Tests\\": "tests/"
         }
     }
 }
