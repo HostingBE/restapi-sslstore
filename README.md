@@ -24,17 +24,14 @@ $logger = (new APILogger)->create('my-api-sslstore');
 $api = new SSLstore($logger, $partnercode, $authtoken, $replaytoken);
 ```
 
-Check the status of the API of SSLstore
+#Check the status of the API of SSLstore
 
 ````
 $response = $api->getServiceStatus();
 ```
 
-Get the details of product code rapidssl
+#Get the details of product code rapidssl
 
 ```
 $response = $api->getProducts('rapidssl');
 ```
-
-
-
