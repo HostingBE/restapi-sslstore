@@ -10,4 +10,25 @@ HostingBE's sslstore API has many options for retrieving certificate data and cr
 
 First of all, requesting different data via REST API with the answer in JSON format. If the API gets an error, it tries the same command a number of times. There is also logging functionality standard in this app.
 
+**Howto start with this API**
+
+`
+use HostingBE\App\SSLstore;
+use HostingBE\App\Logger\APILogger;
+
+$partnercode = "[your partnercode]";
+$authtoken = "[your token]";
+$replaytoken = "[your replay token]";
+
+$logger = (new APILogger)->create('my-api-sslstore');
+$api = new SSLstore($logger, $partnercode, $authtoken, $replaytoken);`
+
+Check the status of the API of SSLstore
+
+`$api->getServiceStatus();`
+
+Get the details of product code rapidssl
+`$api->getProducts('rapidssl');`
+
+
 
