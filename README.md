@@ -12,6 +12,13 @@ First of all, requesting different data via REST API with the answer in JSON for
 
 **Howto start with this API**
 
+Fill in the required fields:
+* partnercode
+* authtoken
+* replaytoken
+
+If you omit the replay token a replay token is auto generated
+
 ```
 use HostingBE\Api\SSLstore;
 use HostingBE\Api\Logger\APILogger;
