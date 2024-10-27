@@ -26,7 +26,7 @@ $api = new SSLstore($logger, $partnercode, $authtoken, $replaytoken);
 
 #Check the status of the API of SSLstore
 
-````
+```
 $response = $api->getServiceStatus();
 ```
 
