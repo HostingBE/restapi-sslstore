@@ -40,9 +40,9 @@ public function __construct($logger, $partnercode, $authtoken, $replaytoken) {
     }
 
 /**
- * Validate Order Parameters is an immutable operation https://www.thesslstore.com/api/validate-order-parameters
+ * Order a new product by passing in all details like CSR https://www.thesslstore.com/api/new-order
  */
-public function ValidateOrder(Contact $admincontact,Contact $techcontact, $organization, $order) {
+public function NewOrder(Contact $admincontact,Contact $techcontact, Contact $organization, $order) {
     
     $csr = $this->cleanCSR($order['csr']);
     
@@ -81,10 +81,56 @@ public function ValidateOrder(Contact $admincontact,Contact $techcontact, $organ
 	'HTTPSFileAuthDVIndicator' => 'true',
 	'SignatureHashAlgorithm' => 'SHA2-512'
      );
-    if (count($order['dnsnames']) > 1) {
-        $extra['DNSNames'] = $order['dnsnames'];
-        $extra['ReserveSANCount'] = '10';
-    }
+
+    $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
+
+    return $this->api->common('POST','/order/neworder',array_merge($this->createAuthRequest() , $extra));
+    }  
+
+    /**
+ * Validate Order Parameters is an immutable operation https://www.thesslstore.com/api/validate-order-parameters
+ */
+public function ValidateOrder(Contact $admincontact,Contact $techcontact, Contact $organization, $order) {
+    
+    $csr = $this->cleanCSR($order['csr']);
+    
+    $extra = array(
+        'CustomOrderID' => '',
+        'ProductCode' => $order['productcode'], 
+        'ExtraProductCodes' => '', 
+        'OrganizationInfo' => array(
+            'OrganizationName' => '', 
+            'DUNS' => '', 
+            'Division' => '', 
+            'IncorporatingAgency' => '', 
+            'RegistrationNumber' => '', 
+            'JurisdictionCity' => '', 
+            'JurisdictionRegion' => '', 
+            'JurisdictionCountry' => '', 
+            'OrganizationAddress' => $organization,
+        ),
+    'ValidityPeriod' => $order['validityperiod'],
+	'ServerCount' => '1',
+	'CSR' => $csr,
+	'DomainName' => $order['domainname'], 
+	'WebServerType' => $order['webservertype'], 
+	'isCUOrder' => 'false',
+	'isRenewalOrder' => 'false',
+	'SpecialInstructions' => 'Requested via API', 
+	'RelatedTheSSLStoreOrderID' =>  '', 
+	'isTrialOrder' => 'true',
+	'AdminContact' => $admincontact,
+	'TechnicalContact' => $techcontact,
+	'ApproverEmail' => $order['approveremail'], 
+	'AddInstallationSupport' => 'false',
+	'EmailLanguageCode' => 'en', 
+	'FileAuthDVIndicator' => 'false',
+	'CNAMEAuthDVIndicator' => 'true',
+	'HTTPSFileAuthDVIndicator' => 'true',
+	'SignatureHashAlgorithm' => 'SHA2-512'
+     );
+
+    $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
 
 
     return $this->api->common('POST','/order/validateorderparameters/',array_merge($this->createAuthRequest() , $extra));
@@ -242,6 +288,20 @@ public function ValidateCredentials() {
 public function getServiceStatus() {
 return $this->api->common('GET','/health/status');
    }
+
+/**
+ * Check if multiple domainnames are passed
+ */
+private function checkSAN($san) {
+ 
+$sanArr = array();
+
+if (count($san) > 1) {
+    $sanArr['DNSNames'] = $san;
+    $sanArr['ReserveSANCount'] = '10';
+ }
+return $sanArr;   
+}
 
 /**
  * Create Authentication with values given from customer

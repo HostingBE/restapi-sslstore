@@ -59,7 +59,7 @@ public function getOrganization() {
         'LocalityName' => $this->getLocalityName()
          );  
 
-    return (array) $OrganizationAddress;
+   return $this;
 }
 
 /**
@@ -83,7 +83,6 @@ $contact = array(
     'Country' => $this->getCountry()
 );
 return $this;   
-// return (array) $contact;
 }
 /**
  * 
