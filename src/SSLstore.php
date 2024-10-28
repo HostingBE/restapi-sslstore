@@ -312,6 +312,9 @@ public function ApproverList($productcode, $domainname) {
     }   
 /**
  * Query the product list https://www.thesslstore.com/api/query-products
+ *
+ * Type of products. ALL=0,DV=1,EV=2,OV=3,WILDCARD=4,SCAN=5,SAN_ENABLED=7,CODESIGN=8,DC_SMIME=11,DC_DOCSIGN=12
+ * 
  */
 public function getProducts($productcode,$producttype = 0) {
     $extra = array(
