@@ -27,7 +27,14 @@ use Monolog\Formatter\LineFormatter;
 
 class APILogger {
 
-    public function create(string $channel = 'testing', string $fileNameHandle = 'app_log', string $location = __DIR__ . "/../../logs") {
+    protected $location = __DIR__ . "/../../logs";
+    protected $fileNameHandle = "app_log";
+
+    public function create(string $channel = 'testing', string $fileNameHandle, string $location) {
+        
+        if (!$location) { $location = $this->location; }
+        if (!$fileNameHandle) { $fileNameHandle = $this->fileNameHandle; }
+
         $logger = new Logger($channel);
         $dateFormat = "n/j/Y, g:i a";
         $formatter = new LineFormatter(null, $dateFormat, false, true);
