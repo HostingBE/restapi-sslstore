@@ -42,3 +42,65 @@ $response = $api->getServiceStatus();
 ```
 $response = $api->getProducts('rapidssl');
 ```
+
+***Validate an order before you place an order***
+```
+/**
+* order details
+*/
+$order = array(
+    'productcode' => 'sectigodvucc',
+    'csr'  => $csr,
+    'domainname'  => 'github.com',
+    'webservertype' => 'apache',
+    'dnsnames' => array('github.com,www.github.com'),
+    'validityperiod'  =>  '12', 
+    'approveremail' => 'admin@email.com',
+
+);
+/**
+* admin contact 
+*/
+$admin = new Contact();
+$admin->setFirstName('First name');
+$admin->setLastName('Last name');
+$admin->setPhone('31000000000');
+$admin->setFax('');
+$admin->setTitle('sir');
+$admin->setEmail('admin@github.com');
+$admin->setOrganizationName('HostingBE');
+$admin->setAddressLine1('my address');
+$admin->setAddressLine2('');
+$admin->setCity('my city');
+$admin->setRegion('my state');
+$admin->setPostalCode('my zipcode');
+$admin->setCountry('NL');
+
+$admincontact = $admin->getContact();
+
+/**
+* copy admin to tech or create a seperate one for tech
+*/
+$techcontact = $admincontact;
+
+$org = new Contact();
+$org->setAddressLine1('my address');
+$org->setAddressLine2('');
+$org->setAddressLine3('');
+$org->setCity('my city');
+$org->setRegion('my state');
+$org->setPostalCode('my zipcode');
+$org->setCountry('NL');
+$org->setPhone('31000000000');
+$org->setFax('');
+$org->setLocalityName('');
+/**
+* organisation details 
+*/
+$organization = $org->getOrganization();
+
+/**
+* send request to SSLstore
+*/
+$response = $api->ValidateOrder($admincontact, $techcontact, $organization, $order);
+```
