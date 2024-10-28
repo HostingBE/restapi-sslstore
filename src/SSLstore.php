@@ -38,6 +38,60 @@ public function __construct($logger, $partnercode, $authtoken, $replaytoken) {
     }
 
 /**
+ * The purpose of Certificate Decoder is to decode your SSL Certificate https://www.thesslstore.com/api/certificate-decoder
+ */
+public function CertificateDecoder(string $crt) {
+
+    $extra = array(
+        'Certificate' => $crt
+        );
+ 
+        return $this->api->common('POST','/ssltools/certdecoder',array_merge($this->createAuthRequest() , $extra));
+}  
+
+/**
+ * The purpose of Certificate Key Matcher is to determine whether a private key or CSR file matches an SSL certificate https://www.thesslstore.com/api/certificate-key-matcher
+ */
+ public function CertificateKeyMatcher(string $crt, string $csr, string $private) {
+
+    $extra = array(
+        'Certificate' => $crt,
+        'CSR' => $csr,
+        'PrivateKey' => $private 
+        );
+ 
+        return $this->api->common('POST','/ssltools/certkeymatcher',array_merge($this->createAuthRequest() , $extra));
+}  
+
+/**
+ * The purpose of the Why No Pad Lock is to quickly check your URL https://www.thesslstore.com/api/why-no-pad-lock
+ */
+
+ public function WhyNoPadLock(string $url) {
+
+    $extra = array(
+        'URL' => $url);
+ 
+        return $this->api->common('POST','/ssltools/whynopadlock',array_merge($this->createAuthRequest() , $extra));
+     }  
+
+/**
+ * Download Certificate as Zip https://www.thesslstore.com/api/download-certificate-as-zip
+ */
+
+ public function DownloadCertificateasZip(string $orderid) {
+
+    $extra = array(
+        'TheSSLStoreOrderID' => $orderid,
+        'ReturnPKCS7Cert' => 'true',
+        'DateTimeCulture' => 'en-UK',
+        'PlatFormId' => 'apache',
+        'FormatType' => '');
+ 
+     return $this->api->common('POST','/order/downloadaszip',array_merge($this->createAuthRequest() , $extra));
+     }       
+
+/**
  * You can download the certificate by passing in required parameters. The format of the download is generally a BASE64 https://www.thesslstore.com/api/download-certificate
  */
 
