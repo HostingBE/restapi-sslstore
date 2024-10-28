@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
 * @author Constan van Suchtelen van de Haere <constan.vansuchtelenvandehaere@hostingbe.com>
 * @copyright 2024 HostingBE
