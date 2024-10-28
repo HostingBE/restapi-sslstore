@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
 * @author Constan van Suchtelen van de Haere <constan.vansuchtelenvandehaere@hostingbe.com>
 * @copyright 2024 HostingBE
@@ -40,10 +38,63 @@ public function __construct($logger, $partnercode, $authtoken, $replaytoken) {
     }
 
 /**
+ * You can download the certificate by passing in required parameters. The format of the download is generally a BASE64 https://www.thesslstore.com/api/download-certificate
+ */
+
+ public function DownloadCertificate(string $orderid) {
+
+    $extra = array(
+        'TheSSLStoreOrderID' => $orderid,
+        'ReturnPKCS7Cert' => 'false',
+        'DateTimeCulture' => 'en-UK',
+        'PlatFormId' => 'apache',
+        'FormatType' => '');
+ 
+     return $this->api->common('POST','/order/download',array_merge($this->createAuthRequest() , $extra));
+     }  
+
+/**
+ * Returns the Current Status of the Order. You can also check MajorStatus and MinorStatus for orders  https://www.thesslstore.com/api/order-status
+ */
+
+ public function OrderStatus(string $orderid,string $ourorder) {
+
+    $extra = array(
+     'TheSSLStoreOrderID' => $orderid,
+     'ResendEmailType' => '',
+     'ResendEmail' => '',
+     'RefundReason' => '',
+     'RefundRequestID' => '',
+     'ApproverMethod' => '',
+     'DomainNames'=> '',
+     'DateTimeCulture' => '',
+     'PlatFormId' => '-2',
+     'FormatType' => '',
+     'CustomOrderID' => $ourorder);
+ 
+     return $this->api->common('POST','/order/status',array_merge($this->createAuthRequest() , $extra));
+     }  
+
+/**
+ * Use this endpoint to check the domain control validation (DCV) for a pending SSL certificate order  https://www.thesslstore.com/api/check-dcv
+ */
+
+ public function CheckDCV(string $orderid,string $domainname,string $ourorder) {
+
+   $extra = array(
+	'TheSSLStoreOrderID' => $orderid,
+	'DomainName' => $domainname,
+	'CustomOrderID' => $ourorder);
+
+    return $this->api->common('POST','/digicert/checkdcv/',array_merge($this->createAuthRequest() , $extra));
+    }  
+
+
+/**
  * Order a new product by passing in all details like CSR https://www.thesslstore.com/api/new-order
  */
-public function NewOrder(Contact $admincontact,Contact $techcontact, Contact $organization, $order) {
-    
+public function NewOrder(array $admincontact,array $techcontact, array $organization, array $order, string $ValidationMethod) {
+
     $csr = $this->cleanCSR($order['csr']);
     
     $extra = array(
@@ -75,13 +126,15 @@ public function NewOrder(Contact $admincontact,Contact $techcontact, Contact $or
 	'TechnicalContact' => $techcontact,
 	'ApproverEmail' => $order['approveremail'], 
 	'AddInstallationSupport' => 'false',
-	'EmailLanguageCode' => 'en', 
-	'FileAuthDVIndicator' => 'false',
-	'CNAMEAuthDVIndicator' => 'true',
-	'HTTPSFileAuthDVIndicator' => 'true',
+	'EmailLanguageCode' => 'en',
+    'FileAuthDVIndicator' => 'false',
+    'CNAMEAuthDVIndicator' => 'false',
+    'HTTPSFileAuthDVIndicator' => 'false',     
 	'SignatureHashAlgorithm' => 'SHA2-512'
      );
 
+
+    $extra = array_merge($extra,$this->validation($ValidationMethod));
     $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
 
     return $this->api->common('POST','/order/neworder',array_merge($this->createAuthRequest() , $extra));
@@ -90,8 +143,8 @@ public function NewOrder(Contact $admincontact,Contact $techcontact, Contact $or
     /**
  * Validate Order Parameters is an immutable operation https://www.thesslstore.com/api/validate-order-parameters
  */
-public function ValidateOrder(Contact $admincontact,Contact $techcontact, Contact $organization, $order) {
-    
+public function ValidateOrder(array $admincontact,array $techcontact, array $organization, array $order, string $ValidationMethod) {
+
     $csr = $this->cleanCSR($order['csr']);
     
     $extra = array(
@@ -119,20 +172,22 @@ public function ValidateOrder(Contact $admincontact,Contact $techcontact, Contac
 	'SpecialInstructions' => 'Requested via API', 
 	'RelatedTheSSLStoreOrderID' =>  '', 
 	'isTrialOrder' => 'true',
-	'AdminContact' => $admincontact,
+	'AdminContact' =>  $admincontact,
 	'TechnicalContact' => $techcontact,
 	'ApproverEmail' => $order['approveremail'], 
-	'AddInstallationSupport' => 'false',
+	'ReserveSANCount' => '10',
+    'AddInstallationSupport' => 'false',
 	'EmailLanguageCode' => 'en', 
-	'FileAuthDVIndicator' => 'false',
-	'CNAMEAuthDVIndicator' => 'true',
-	'HTTPSFileAuthDVIndicator' => 'true',
-	'SignatureHashAlgorithm' => 'SHA2-512'
+    'FileAuthDVIndicator' => 'false',
+    'CNAMEAuthDVIndicator' => 'false',
+    'HTTPSFileAuthDVIndicator' => 'false',
+	'SignatureHashAlgorithm' => 'SHA2-256'
      );
+    
+    $extra = array_merge($extra,$this->validation($ValidationMethod));
 
     $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
-
-
+    
     return $this->api->common('POST','/order/validateorderparameters/',array_merge($this->createAuthRequest() , $extra));
     }  
 
@@ -299,7 +354,7 @@ $sanArr = array();
 if (count($san) > 1) {
     $sanArr['DNSNames'] = $san;
     $sanArr['ReserveSANCount'] = '10';
- }
+    }
 return $sanArr;   
 }
 
@@ -307,11 +362,10 @@ return $sanArr;
  * Create Authentication with values given from customer
  */
 private function createAuthRequest() {
-    $this->replaytoken = $this->replaytoken  ?: $this->generateRandomString(32);
+   $this->replaytoken = $this->replaytoken  ?: $this->generateRandomString(32);
+   return array('AuthRequest' => array('PartnerCode' => $this->partnercode,'AuthToken' => $this->authtoken,'ReplayToken' => $this->replaytoken, 'IsUsedForTokenSystem' => 'false'));
+   }
 
-    return array('AuthRequest' => array('PartnerCode' => $this->partnercode,'AuthToken' => $this->authtoken,'ReplayToken' => $this->replaytoken));
-    }
-    
 /**
 * Create Authentication with values given from customer
 */
@@ -327,6 +381,14 @@ private function createValidateAuth() {
 private function cleanCSR($csr) {
     return str_ireplace(PHP_EOL,'',$csr); 
 }
+
+private function validation($ValidationMethod) {
+    array('CNAMEAuthDVIndicator','HTTPSFileAuthDVIndicator','FileAuthDVIndicator');
+    if (in_array($ValidationMethod, array('CNAMEAuthDVIndicator','HTTPSFileAuthDVIndicator','FileAuthDVIndicator'))) {
+       return array($ValidationMethod => 'true');
+       }
+    throw new \Exception("invalid Validation Method received stopping!");
+    }
 /**
 * Generate Random Strings
 */
