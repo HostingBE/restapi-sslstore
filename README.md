@@ -10,6 +10,32 @@ HostingBE's sslstore API has many options for retrieving certificate data and cr
 
 First of all, requesting different data via REST API with the answer in JSON format. If the API gets an error, it tries the same command a number of times. There is also logging functionality standard in this app.
 
+
+**Integrated endpoints**
+| getServiceStatus ||
+| VAidateCredentials ||
+| ValidateToken ||
+| getProducts ||
+| ApproverList ||
+| ValidateCSR ||
+| DecodeCSR ||
+| CSRgenerator ||
+| CAAgenerator ||
+| SSLchecker ||
+| ServerChecker ||
+| listOrders ||
+| WhoisCheck ||
+| ProductAgreement ||
+| ValidateOrder ||
+| NewOrder ||
+| CheckDCV | | 
+| OrderStatus | |
+| DownloadCertificate ||
+| DownloadCertificateasZip ||
+| WhyNoPadLock ||
+| CertificateKeyMatcher ||
+| CertificateDecoder| |
+
 **Howto start with this API**
 
 Fill in the required fields:
