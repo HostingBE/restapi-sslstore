@@ -1,14 +1,29 @@
 <?php
 
+
+
 /**
 * @author Constan van Suchtelen van de Haere <constan.vansuchtelenvandehaere@hostingbe.com>
 * @copyright 2024 HostingBE
 *
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+* files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy,
+* modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+* is furnished to do so, subject to the following conditions:
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+* OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+* BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+* OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*
 */
+
 namespace HostingBE\Api;
 
 use HostingBE\Api\Logger\Logger;
 use HostingBE\Api\baseAPI;
+use HostingBE\Api\Contact;
 use GuzzleHttp\Exception\RequestException;
 
 class SSLStore {
@@ -27,84 +42,50 @@ public function __construct($logger, $partnercode, $authtoken, $replaytoken) {
 /**
  * Validate Order Parameters is an immutable operation https://www.thesslstore.com/api/validate-order-parameters
  */
-public function ValidateOrder($order) {
-
+public function ValidateOrder(Contact $admincontact,Contact $techcontact, $organization, $order) {
+    
+    $csr = $this->cleanCSR($order['csr']);
+    
     $extra = array(
-        'CustomOrderID' => 'String content',
+        'CustomOrderID' => '',
         'ProductCode' => $order['productcode'], 
-        'ExtraProductCodes' => 'String content', 
+        'ExtraProductCodes' => '', 
         'OrganizationInfo' => array(
-            'OrganizationName' => 'String content', 
-            'DUNS' => 'String content', 
-            'Division' => 'String content', 
-            'IncorporatingAgency' => 'String content', 
-            'RegistrationNumber' => 'String content', 
-            'JurisdictionCity' => 'String content', 
-            'JurisdictionRegion' => 'String content', 
-            'JurisdictionCountry' => 'String content', 
-            'OrganizationAddress' => array(
-                'AddressLine1' => 'String content', 
-                'AddressLine2' => 'String content', 
-                'AddressLine3' => 'String content', 
-                'City' => 'String content', 
-                'Region' => 'String content', 
-                'PostalCode' => 'String content', 
-                'Country' => 'String content', 
-                'Phone' => 'String content', 
-                'Fax' => 'String content', 
-                'LocalityName' => 'String content'
-            ),
+            'OrganizationName' => '', 
+            'DUNS' => '', 
+            'Division' => '', 
+            'IncorporatingAgency' => '', 
+            'RegistrationNumber' => '', 
+            'JurisdictionCity' => '', 
+            'JurisdictionRegion' => '', 
+            'JurisdictionCountry' => '', 
+            'OrganizationAddress' => $organization,
         ),
     'ValidityPeriod' => $order['validityperiod'],
 	'ServerCount' => '1',
-	'CSR' => $order['csr'],
+	'CSR' => $csr,
 	'DomainName' => $order['domainname'], 
 	'WebServerType' => $order['webservertype'], 
-	'DNSNames' => array($order['dnsnames']),
-	'isCUOrder' => 'true',
+	'isCUOrder' => 'false',
 	'isRenewalOrder' => 'false',
 	'SpecialInstructions' => 'Requested via API', 
-	'RelatedTheSSLStoreOrderID' =>  'String content', 
+	'RelatedTheSSLStoreOrderID' =>  '', 
 	'isTrialOrder' => 'true',
-	'AdminContact' => array(
-		'FirstName' => 'String content', 
-		'LastName' => 'String content', 
-		'Phone' => 'String content', 
-		'Fax' => 'String content', 
-		'Email' => 'String content', 
-		'Title' => 'String content', 
-		'OrganizationName' => 'String content', 
-		'AddressLine1' => 'String content', 
-		'AddressLine2' => 'String content', 
-		'City' => 'String content', 
-		'Region' => 'String content', 
-		'PostalCode' => 'String content', 
-		'Country' => 'String content'
-	),
-	'TechnicalContact' => array(
-		'FirstName' => 'String content', 
-		'LastName' => 'String content', 
-		'Phone' => 'String content', 
-		'Fax' => 'String content', 
-		'Email' => 'String content', 
-		'Title' => 'String content', 
-		'OrganizationName' => 'String content', 
-		'AddressLine1' => 'String content', 
-		'AddressLine2' => 'String content', 
-		'City' => 'String content', 
-		'Region' => 'String content', 
-		'PostalCode' => 'String content', 
-		'Country' => 'String content', 
-    ),
+	'AdminContact' => $admincontact,
+	'TechnicalContact' => $techcontact,
 	'ApproverEmail' => $order['approveremail'], 
-	'ReserveSANCount' => '2147483647',
-	'AddInstallationSupport' => 'true',
-	'EmailLanguageCode' => 'String content', 
-	'FileAuthDVIndicator' => 'true',
+	'AddInstallationSupport' => 'false',
+	'EmailLanguageCode' => 'en', 
+	'FileAuthDVIndicator' => 'false',
 	'CNAMEAuthDVIndicator' => 'true',
 	'HTTPSFileAuthDVIndicator' => 'true',
-	'SignatureHashAlgorithm' => 'String content'
+	'SignatureHashAlgorithm' => 'SHA2-512'
      );
+    if (count($order['dnsnames']) > 1) {
+        $extra['DNSNames'] = $order['dnsnames'];
+        $extra['ReserveSANCount'] = '10';
+    }
+
 
     return $this->api->common('POST','/order/validateorderparameters/',array_merge($this->createAuthRequest() , $extra));
     }  
@@ -165,14 +146,14 @@ public function SSLChecker($hostname) {
 /**
  * CAA (Certification Authority Authorization) Record Generator https://www.thesslstore.com/api/caa-record-generator
  */
-public function CAAgenerator($hostname, $ca = 'Certum') {
+public function CAAgenerator($hostname, $ca) {
 
     $extra = array(
         'HostName' => $hostname,
-        'CA' => array(
+        'CA' => [[
             'CAName' => $ca,
             'sNonWildCardDomain' => 'false',
-            'IsWildCardDomain' => 'false'));
+            'IsWildCardDomain' => 'false']]);
 
         return $this->api->common('POST','/ssltools/caarecordgenerator',array_merge($this->createAuthRequest() , $extra));
     }   
@@ -211,7 +192,7 @@ public function DecodeCSR($csr) {
  * get the approval list https://www.thesslstore.com/api/csr-validation-service
  */
 public function ValidateCSR($productcode, $csr) {
-    $csr = str_ireplace(PHP_EOL,'',$csr);
+    $csr = $this->cleanCSR($csr);
     $extra = array(
         'ProductCode' => $productcode,
         'CSR' => $csr);
@@ -280,7 +261,12 @@ private function createValidateAuth() {
 
     return array('PartnerCode' => $this->partnercode,'AuthToken' => $this->authtoken,'ReplayToken' => $this->replaytoken);
     }
-
+/**
+ * remove returns from CSR
+ */
+private function cleanCSR($csr) {
+    return str_ireplace(PHP_EOL,'',$csr); 
+}
 /**
 * Generate Random Strings
 */
