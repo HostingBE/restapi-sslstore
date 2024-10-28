@@ -14,29 +14,29 @@ First of all, requesting different data via REST API with the answer in JSON for
 **Integrated endpoints**
 | Endpoint API | Description |
 | -------------|-------------|
-| getServiceStatus ||
-| VAidateCredentials ||
-| ValidateToken ||
-| getProducts ||
-| ApproverList ||
-| ValidateCSR ||
-| DecodeCSR ||
-| CSRgenerator ||
-| CAAgenerator ||
-| SSLchecker ||
-| ServerChecker ||
-| listOrders ||
-| WhoisCheck ||
-| ProductAgreement ||
-| ValidateOrder ||
-| NewOrder ||
-| CheckDCV | | 
-| OrderStatus | |
-| DownloadCertificate ||
-| DownloadCertificateasZip ||
-| WhyNoPadLock ||
-| CertificateKeyMatcher ||
-| CertificateDecoder| |
+| getServiceStatus | Get the health status of the health status |
+| ValidateCredentials | Validate the credentials |
+| ValidateToken | Validate the token |
+| getProducts | Query the product list |
+| ApproverList | get the approval list |
+| ValidateCSR | Validate a CSR |
+| DecodeCSR | decode your Certificate Signing Request |
+| CSRgenerator | CSR Generator is to generate your Certificate Signing Request and Private Key |
+| CAAgenerator | CAA (Certification Authority Authorization) Record Generator |
+| SSLchecker | SSL CHECKER is to verify that the SSL certificate on your web server |
+| ServerChecker | SSL Server Checker tool is to provide an in-depth analysis of the SSL web server  |
+| listOrders | query your orders |
+| WhoisCheck | whois Check Service |
+| ProductAgreement | Show agreements between the vendor and the customer |
+| ValidateOrder | Validate Order Parameters is an immutable operation |
+| NewOrder | Order a new product by passing in all details like CSR |
+| CheckDCV | Use this endpoint to check the domain control validation (DCV) for a pending SSL certificate order | 
+| OrderStatus | Returns the Current Status of the Order. You can also check MajorStatus and MinorStatus for orders |
+| DownloadCertificate | You can download the certificate by passing in required parameters. The format of the download is generally a BASE64 |
+| DownloadCertificateasZip | Download Certificates as Zip |
+| WhyNoPadLock | The purpose of the Why No Pad Lock is to quickly check your URL  |
+| CertificateKeyMatcher | The purpose of Certificate Key Matcher is to determine whether a private key or CSR file matches an SSL certificate |
+| CertificateDecoder| The purpose of Certificate Decoder is to decode your SSL Certificate |
 
 **Howto start with this API**
 
