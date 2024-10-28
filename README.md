@@ -12,6 +12,8 @@ First of all, requesting different data via REST API with the answer in JSON for
 
 
 **Integrated endpoints**
+| Endpoint API | Description |
+| -------------|-------------|
 | getServiceStatus ||
 | VAidateCredentials ||
 | ValidateToken ||
