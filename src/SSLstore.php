@@ -229,7 +229,6 @@ public function ValidateOrder(array $admincontact,array $techcontact, array $org
 	'AdminContact' =>  $admincontact,
 	'TechnicalContact' => $techcontact,
 	'ApproverEmail' => $order['approveremail'], 
-	'ReserveSANCount' => '10',
     'AddInstallationSupport' => 'false',
 	'EmailLanguageCode' => 'en', 
     'FileAuthDVIndicator' => 'false',
@@ -242,6 +241,8 @@ public function ValidateOrder(array $admincontact,array $techcontact, array $org
 
     $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
     
+    // print_r(array_merge($this->createAuthRequest() , $extra));exit;
+
     return $this->api->common('POST','/order/validateorderparameters/',array_merge($this->createAuthRequest() , $extra));
     }  
 
