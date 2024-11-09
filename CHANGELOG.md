@@ -1,5 +1,7 @@
 ## 1.0.2 - 2024-11-09
 - validate order checked
+- added endpoint Invite Order
+- 
 
 ## 1.0.1 - 2024-10-28
 - added multiple new endpoints

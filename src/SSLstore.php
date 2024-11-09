@@ -143,6 +143,29 @@ public function CertificateDecoder(string $crt) {
     return $this->api->common('POST','/digicert/checkdcv/',array_merge($this->createAuthRequest() , $extra));
     }  
 
+/**
+ * This is an alternate way of ordering when you don’t want to provide all the CSR, etc. steps on your front-end. With Invite Order https://www.thesslstore.com/api/invite-order
+ */
+public function InviteOrder(array $order) :object {
+
+    $extra = array(
+    'PreferVendorLink' => 'false',
+	'ProductCode'=> $order['productcode'],
+	'ExtraProductCode' => '',
+	'ServerCount' => '1',
+	'RequestorEmail' => $order['approveremail'],
+	'ExtraSAN' => '4',
+	'CustomOrderID' => $order['ordernr'],
+	'ValidityPeriod' => $order['validityperiod'],
+    'AddInstallationSupport' => 'false',
+	'EmailLanguageCode' => 'EN',
+	'PreferSendOrderEmails' => 'true',
+	'OrganizationIds ' => [],
+	'IsWildcardCSRDomain' =>  'true',
+	'ExtraWildcardSAN'=> '0');
+
+     return $this->api->common('POST','/order/inviteorder',array_merge($this->createAuthRequest() , $extra));
+     }  
 
 /**
  * Order a new product by passing in all details like CSR https://www.thesslstore.com/api/new-order
