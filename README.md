@@ -33,6 +33,7 @@ First of all, requesting different data via REST API with the answer in JSON for
 | NewOrder | Order a new product by passing in all details like CSR |
 | CheckDCV | Use this endpoint to check the domain control validation (DCV) for a pending SSL certificate order | 
 | OrderStatus | Returns the Current Status of the Order. You can also check MajorStatus and MinorStatus for orders |
+| RefundOrder | Marks an order to be refunded |
 | DownloadCertificate | You can download the certificate by passing in required parameters. The format of the download is generally a BASE64 |
 | DownloadCertificateasZip | Download Certificates as Zip |
 | WhyNoPadLock | The purpose of the Why No Pad Lock is to quickly check your URL  |
