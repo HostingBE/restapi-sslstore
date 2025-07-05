@@ -92,6 +92,20 @@ public function CertificateDecoder(string $crt) {
      }       
 
 /**
+ * Certificate Revoke Request https://www.thesslstore.com/api/certificate-revoke-request
+ */
+ public function CertificateRevokeRequest(string $orderid, string $ourorder, string $revokereason) {
+    
+    $extra = array(
+     'CustomOrderID' => $ourorder,
+     'TheSSLStoreOrderID' => $orderid,
+     'RevokeReason' => $revokereason
+      );
+
+  return $this->api->common('POST','/order/certificaterevokerequest',array_merge($this->createAuthRequest() , $extra));
+ }
+
+/**
  * cancel order or refund order https://www.thesslstore.com/api/refund-request
  */
  public function RefundOrder(string $orderid, string $ourorder, string $refundreason) {
