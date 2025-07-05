@@ -92,6 +92,25 @@ public function CertificateDecoder(string $crt) {
      }       
 
 /**
+ * cancel order or refund order https://www.thesslstore.com/api/refund-request
+ */
+ public function RefundOrder(string $orderid, string $ourorder, string $refundreason) {
+    
+    $extra = array(
+     'CustomOrderID' => $ourorder,
+     'TheSSLStoreOrderID' => $orderid,
+     'ResendEmailType' => '',
+     'ResendEmail' => '',
+     'RefundReason' => $refundreason,
+     'RefundRequestID' => $ourorder,
+     'ApproverMethod'=> '',
+     'DomainNames' => ''
+      );
+
+  return $this->api->common('POST','/order/refundrequest',array_merge($this->createAuthRequest() , $extra));
+ }
+
+/**
  * You can download the certificate by passing in required parameters. The format of the download is generally a BASE64 https://www.thesslstore.com/api/download-certificate
  */
 
@@ -191,7 +210,7 @@ public function NewOrder(array $admincontact,array $techcontact, array $organiza
         ),
     'ValidityPeriod' => $order['validityperiod'],
 	'ServerCount' => '1',
-	'CSR' => $csr,
+	'CSR' => "$csr",
 	'DomainName' => $order['domainname'], 
 	'WebServerType' => $order['webservertype'], 
 	'isCUOrder' => 'false',
@@ -214,7 +233,7 @@ public function NewOrder(array $admincontact,array $techcontact, array $organiza
     $extra = array_merge($extra,$this->validation($ValidationMethod));
     $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
 
-    return $this->api->common('POST','/order/neworder',array_merge($this->createAuthRequest() , $extra));
+   return $this->api->common('POST','/order/neworder',array_merge($this->createAuthRequest() , $extra));
     }  
 
     /**
@@ -460,6 +479,7 @@ private function createValidateAuth() {
  * remove returns from CSR
  */
 private function cleanCSR($csr) {
+    // return rawurlencode($csr);
     return str_ireplace(PHP_EOL,'',$csr); 
 }
 

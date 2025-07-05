@@ -29,6 +29,7 @@ First of all, requesting different data via REST API with the answer in JSON for
 | WhoisCheck | whois Check Service |
 | ProductAgreement | Show agreements between the vendor and the customer |
 | ValidateOrder | Validate Order Parameters is an immutable operation |
+| InviteOrder | Short order form which sends invite link to complete order |
 | NewOrder | Order a new product by passing in all details like CSR |
 | CheckDCV | Use this endpoint to check the domain control validation (DCV) for a pending SSL certificate order | 
 | OrderStatus | Returns the Current Status of the Order. You can also check MajorStatus and MinorStatus for orders |
