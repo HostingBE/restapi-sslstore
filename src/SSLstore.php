@@ -244,8 +244,8 @@ public function NewOrder(array $admincontact,array $techcontact, array $organiza
      );
 
 
-    $extra = array_merge($extra,$this->validation($ValidationMethod));
-    $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
+   $extra = array_merge($extra,$this->validation($ValidationMethod));
+   $extra = array_merge($extra, $this->checkSAN($order['dnsnames']));
 
    return $this->api->common('POST','/order/neworder',array_merge($this->createAuthRequest() , $extra));
     }  
